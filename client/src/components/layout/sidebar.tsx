@@ -24,10 +24,10 @@ const SidebarItem = ({ href, icon, label, onClick }: SidebarItemProps) => {
 
   return (
     <div className="relative group">
-      <Link href={href}>
-        <a
+      {onClick ? (
+        <div
           className={cn(
-            "relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto",
+            "relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto cursor-pointer",
             "shadow-lg bg-secondary text-accent hover:bg-accent hover:text-white",
             "rounded-xl transition-all duration-300 ease-linear",
             isActive && "bg-accent text-white"
@@ -35,8 +35,21 @@ const SidebarItem = ({ href, icon, label, onClick }: SidebarItemProps) => {
           onClick={onClick}
         >
           {icon}
-        </a>
-      </Link>
+        </div>
+      ) : (
+        <Link href={href}>
+          <div
+            className={cn(
+              "relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto cursor-pointer",
+              "shadow-lg bg-secondary text-accent hover:bg-accent hover:text-white",
+              "rounded-xl transition-all duration-300 ease-linear",
+              isActive && "bg-accent text-white"
+            )}
+          >
+            {icon}
+          </div>
+        </Link>
+      )}
       <span className="absolute w-auto p-2 m-2 min-w-max left-14 rounded-md shadow-md text-white bg-secondary text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100 z-10">
         {label}
       </span>

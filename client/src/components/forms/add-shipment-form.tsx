@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 // Extend the insert schema with client validation
 const formSchema = insertShipmentSchema.extend({
   eta: z.string().min(1, { message: "Expected delivery date is required" }),
+  cost: z.coerce.number().min(0, { message: "Cost must be a positive number" }),
 });
 
 interface AddShipmentFormProps {

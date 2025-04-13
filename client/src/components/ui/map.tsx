@@ -75,15 +75,15 @@ const Map = ({ suppliers, onRouteClick }: MapProps) => {
     if (!shipments || !suppliers) return;
 
     // Create a mapping of supplier names to their locations
-    const supplierMap = new Map<string, { lat: number; lng: number }>();
+    const supplierMap: Record<string, { lat: number; lng: number }> = {};
     suppliers.forEach(supplier => {
-      supplierMap.set(supplier.name.split(' ')[1], supplier.location);
+      supplierMap[supplier.name.split(' ')[1]] = supplier.location;
     });
 
     // Create routes based on shipments
     const shipmentRoutes = shipments.map(shipment => {
-      const sourceLocation = supplierMap.get(shipment.source);
-      const destLocation = supplierMap.get(shipment.destination);
+      const sourceLocation = supplierMap[shipment.source];
+      const destLocation = supplierMap[shipment.destination];
       
       if (!sourceLocation || !destLocation) return null;
       

@@ -142,7 +142,7 @@ export function ShipmentDetailsModal() {
                     <h5 className="font-medium">Departed {selectedShipment.source}</h5>
                     <p className="text-sm text-gray-400">
                       {format(
-                        new Date(selectedShipment.createdAt.getTime() + 86400000), 
+                        new Date(new Date(selectedShipment.createdAt).getTime() + 86400000), 
                         'MMM dd, yyyy - hh:mm a'
                       )}
                     </p>
