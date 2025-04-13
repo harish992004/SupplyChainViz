@@ -60,15 +60,25 @@ export function AddShipmentForm({ onSuccess, onCancel }: AddShipmentFormProps) {
   
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      console.log("Form values:", values);
+      
+      // Make sure etaString has a proper time component
+      let etaDate = new Date(values.etaString);
+      if (isNaN(etaDate.getTime())) {
+        throw new Error("Invalid date format for ETA");
+      }
+      
       // Convert string date to ISO date string
       const formattedValues = {
         productId: values.productId,
         source: values.source,
         destination: values.destination,
         cost: values.cost,
-        eta: new Date(values.etaString), // Convert to Date object for server
+        eta: etaDate.toISOString(), // Send as ISO string
         status: values.status
       };
+      
+      console.log("Sending to server:", formattedValues);
       
       await apiRequest('POST', '/api/shipments', formattedValues);
       

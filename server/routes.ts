@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertShipmentSchema, insertSupplierSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // prefix all routes with /api
@@ -85,7 +86,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post(`${apiPrefix}/shipments`, async (req: Request, res: Response) => {
     try {
-      const parseResult = insertShipmentSchema.safeParse(req.body);
+      console.log("Request body:", JSON.stringify(req.body));
+      
+      // Create a modified schema for shipment creation
+      const createShipmentSchema = z.object({
+        productId: z.string(),
+        source: z.string(),
+        destination: z.string(),
+        cost: z.number(),
+        eta: z.instanceof(Date).or(z.string().transform(val => new Date(val))),
+        status: z.string()
+      });
+      
+      const parseResult = createShipmentSchema.safeParse(req.body);
       
       if (!parseResult.success) {
         const validationError = fromZodError(parseResult.error);
