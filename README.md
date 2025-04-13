@@ -1,0 +1,1 @@
+A full-stack web application for visualizing supply chain data using maps and analytics. Built with the MERN stack (MongoDB, Express.js, React.js, Node.js) and Leaflet.js for interactive map rendering
