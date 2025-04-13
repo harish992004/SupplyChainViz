@@ -18,10 +18,14 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-// Extend the insert schema with client validation
-const formSchema = insertShipmentSchema.extend({
-  eta: z.string().min(1, { message: "Expected delivery date is required" }),
+// Create a modified schema for the form
+const formSchema = z.object({
+  productId: z.string().min(1, { message: "Product ID is required" }),
+  source: z.string().min(1, { message: "Source is required" }),
+  destination: z.string().min(1, { message: "Destination is required" }),
   cost: z.coerce.number().min(0, { message: "Cost must be a positive number" }),
+  etaString: z.string().min(1, { message: "Expected delivery date is required" }),
+  status: z.string().min(1, { message: "Status is required" }),
 });
 
 interface AddShipmentFormProps {
@@ -40,7 +44,7 @@ export function AddShipmentForm({ onSuccess, onCancel }: AddShipmentFormProps) {
       source: "",
       destination: "",
       cost: 0,
-      eta: new Date().toISOString().substring(0, 10),
+      etaString: new Date().toISOString().substring(0, 10),
       status: ShipmentStatus.PROCESSING
     },
   });
@@ -58,9 +62,12 @@ export function AddShipmentForm({ onSuccess, onCancel }: AddShipmentFormProps) {
     try {
       // Convert string date to ISO date string
       const formattedValues = {
-        ...values,
-        eta: new Date(values.eta).toISOString(),
-        cost: parseFloat(values.cost.toString())
+        productId: values.productId,
+        source: values.source,
+        destination: values.destination,
+        cost: values.cost,
+        eta: new Date(values.etaString), // Convert to Date object for server
+        status: values.status
       };
       
       await apiRequest('POST', '/api/shipments', formattedValues);
@@ -185,7 +192,7 @@ export function AddShipmentForm({ onSuccess, onCancel }: AddShipmentFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="eta"
+            name="etaString"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-gray-400">Expected Delivery Date</FormLabel>
