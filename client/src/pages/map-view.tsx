@@ -1,18 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/layout/header';
 import Map from '@/components/ui/map';
 import { useSuppliers } from '@/hooks/use-suppliers';
+import { useShipments } from '@/hooks/use-shipments';
 import { locationType } from '@shared/schema';
 
 export default function MapView() {
-  const { data: suppliers = [], isLoading } = useSuppliers();
+  const { data: suppliers = [], isLoading: suppliersLoading } = useSuppliers();
+  const { data: shipments = [], isLoading: shipmentsLoading } = useShipments();
+  const [highlightedShipmentId, setHighlightedShipmentId] = useState<number | null>(null);
+  
+  // Look for shipment ID in URL parameters
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shipmentId = params.get('shipment');
+    if (shipmentId) {
+      const id = parseInt(shipmentId, 10);
+      if (!isNaN(id)) {
+        setHighlightedShipmentId(id);
+        // Can also show details modal for this shipment
+        const event = new CustomEvent('openShipmentDetailsModal', { detail: id });
+        window.dispatchEvent(event);
+      }
+    }
+  }, []);
   
   const handleRouteClick = (shipmentId: number) => {
+    setHighlightedShipmentId(shipmentId);
     const event = new CustomEvent('openShipmentDetailsModal', { detail: shipmentId });
     window.dispatchEvent(event);
   };
   
-  if (isLoading) {
+  if (suppliersLoading || shipmentsLoading) {
     return (
       <div>
         <Header title="Map View" />

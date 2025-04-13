@@ -219,7 +219,20 @@ export function ShipmentDetailsModal() {
         <div className="flex justify-end space-x-4">
           <Button 
             variant="outline"
-            className="bg-gray-700 text-white hover:bg-gray-600" 
+            className="bg-gray-700 text-white hover:bg-gray-600"
+            onClick={() => {
+              // Generate a download of shipment details
+              const shipmentData = JSON.stringify(selectedShipment, null, 2);
+              const blob = new Blob([shipmentData], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `shipment-${selectedShipment.id}-details.json`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
           >
             Download Details
           </Button>
@@ -227,9 +240,9 @@ export function ShipmentDetailsModal() {
             className="bg-accent text-white hover:bg-teal-600"
             onClick={() => {
               setIsOpen(false);
-              // Navigate to map view
-              window.history.pushState({}, "", "/map");
-              window.dispatchEvent(new PopStateEvent("popstate"));
+              // Use wouter navigation approach for routing
+              // Navigate to map and also set current shipment ID in URL
+              window.location.href = `/map?shipment=${selectedShipment.id}`;
             }}
           >
             Track on Map
