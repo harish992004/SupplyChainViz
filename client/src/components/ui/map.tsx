@@ -15,6 +15,7 @@ L.Icon.Default.mergeOptions({
 interface MapProps {
   suppliers: Supplier[];
   onRouteClick?: (shipmentId: number) => void;
+  highlightedShipmentId?: number | null;
 }
 
 // Component to apply dark mode to map tiles
@@ -48,7 +49,7 @@ const DarkModeMapTiles = () => {
   return null;
 };
 
-const Map = ({ suppliers, onRouteClick }: MapProps) => {
+const Map = ({ suppliers, onRouteClick, highlightedShipmentId }: MapProps) => {
   const { data: shipments } = useShipments();
   const [routes, setRoutes] = useState<any[]>([]);
 
@@ -135,9 +136,9 @@ const Map = ({ suppliers, onRouteClick }: MapProps) => {
               key={route.id}
               positions={[[route.from.lat, route.from.lng], [route.to.lat, route.to.lng]]}
               pathOptions={{
-                color: "#FFFFFF",
-                weight: 2,
-                opacity: route.status === 'in_transit' ? 1 : 0.5
+                color: highlightedShipmentId === route.id ? "#14B8A6" : "#FFFFFF",
+                weight: highlightedShipmentId === route.id ? 4 : 2,
+                opacity: (route.status === 'in_transit' || highlightedShipmentId === route.id) ? 1 : 0.5
               }}
               eventHandlers={{
                 click: () => onRouteClick && onRouteClick(route.id),
@@ -147,11 +148,20 @@ const Map = ({ suppliers, onRouteClick }: MapProps) => {
                 },
                 mouseout: (e) => {
                   const layer = e.target;
-                  layer.setStyle({ 
-                    weight: 2, 
-                    color: "#FFFFFF", 
-                    opacity: route.status === 'in_transit' ? 1 : 0.5 
-                  });
+                  // If this is the highlighted route, keep it highlighted
+                  if (highlightedShipmentId === route.id) {
+                    layer.setStyle({
+                      weight: 4,
+                      color: "#14B8A6",
+                      opacity: 1
+                    });
+                  } else {
+                    layer.setStyle({ 
+                      weight: 2, 
+                      color: "#FFFFFF", 
+                      opacity: route.status === 'in_transit' ? 1 : 0.5 
+                    });
+                  }
                 }
               }}
             />

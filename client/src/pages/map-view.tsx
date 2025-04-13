@@ -50,7 +50,11 @@ export default function MapView() {
       <main className="p-6">
         <div className="bg-secondary rounded-xl overflow-hidden shadow-lg mb-6">
           <div className="h-[500px]">
-            <Map suppliers={suppliers} onRouteClick={handleRouteClick} />
+            <Map 
+              suppliers={suppliers} 
+              onRouteClick={handleRouteClick} 
+              highlightedShipmentId={highlightedShipmentId}
+            />
           </div>
           <div className="p-4 bg-secondary border-t border-gray-700 flex flex-wrap gap-4">
             <div className="flex items-center mr-4">
